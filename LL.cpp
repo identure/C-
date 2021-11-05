@@ -10,12 +10,11 @@ struct Node {
 // print all integers in the list, in order
 void print(Node* head) {
 	// IMPLEMENT ME
-	Node* tmp = head;
-	while(tmp!=nullptr){
-		cout << tmp->data << "1 ";
-		tmp = tmp->next;
+	// Node* tmp = head;
+	while(head!=nullptr){
+		cout << head->data;
+		head = head->next;
 	}
-	delete tmp;
 	cout << endl;
 }
 
@@ -23,6 +22,7 @@ void print(Node* head) {
 // If there are more than one match, return the first one.
 // if not found, return nullptr
 Node* find(Node* head, int t) {
+	if(head==nullptr) return nullptr;
 	Node* tmp = head;
 	while(tmp != nullptr) {
 		if (tmp->data == t) return tmp;
@@ -44,9 +44,10 @@ void insert_head(Node*& head, int t) {
 // location is assumed to point to a valid position in the list
 void insert_after(Node* location, int t) {
 	// IMPLEMENT ME
-    Node* tmp = location->next;
-	tmp->data = t;
-	location->next = tmp;
+    Node* tmp = new Node;
+    tmp->data=t;
+    tmp->next=location->next;
+    location->next=tmp;
 }
 
 // remove head from the list
@@ -65,7 +66,7 @@ void remove_head(Node*& head) {
 // the last one) do nothing
 void remove_after(Node* location) {
 	// IMPLEMENT ME 
-    if (location->next == nullptr) return;
+    if (location == nullptr || location->next == nullptr) return;
     Node* tmp = location->next;
     location->next = tmp->next;
     delete tmp;
@@ -88,18 +89,18 @@ int main() {
 	// some example usage of these functions
 	Node* mylist = nullptr;
 	print(mylist);
-	// insert_head(mylist, 1);
-	// insert_head(mylist, 2);
-	// insert_head(mylist, 3);
-	// print(mylist);
-	// Node* result = find(mylist,3);
-	// if (result != nullptr) insert_after(result, 5);
-	// print(mylist);
-	// remove_head(mylist);
-	// print(mylist);
-	// remove_after(find(mylist,5));
-	// print(mylist);
-	// cleanup(mylist);
+	insert_head(mylist, 1);
+	insert_head(mylist, 2);
+	insert_head(mylist, 3);
+	print(mylist);
+	Node* result = find(mylist,3);
+	if (result != nullptr) insert_after(result, 5);
+	print(mylist);
+	remove_head(mylist);
+	print(mylist);
+	remove_after(find(mylist,5));
+	print(mylist);
+	cleanup(mylist);
 	// print(mylist);
 
 }
