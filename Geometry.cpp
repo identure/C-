@@ -30,8 +30,23 @@ int Shape::dim() const {
 
 void Shape::translate(float x, float y) {
 	// IMPLEMENT ME
-	pX_ = pX_ + x;
-	pY_ = pY_ + y;
+	cout << dim() << "dim" << endl;
+	if (dim()==0) {
+		pX_ = pX_ + x;
+		pY_ = pY_ + y;
+	}else if(dim()==1){
+		lineXmin_ = lineXmin_ + x;
+		lineXmax_ = lineXmax_ + x;
+		lineYmin_ = lineYmin_ + y;
+		lineYmax_ = lineYmax_ + y;
+	}else if (dim()==2) {
+		recXmin_ = recXmin_ + x;
+		recXmax_ = recXmax_ + x;
+		recYmin_ = recYmin_ + y;
+		recYmax_ = recYmax_ + y;
+		circleX_ = circleX_ + x;
+		circleY_ = circleY_ + y;
+	}
 }
 
 void Shape::rotate() {
@@ -64,11 +79,28 @@ void Shape::rotate() {
 
 void Shape::scale(float f) {
 	// IMPLEMENT ME
+	if (f <= 0) {
+		throw std::invalid_argument("the f is 0 or negative");
+	}
+	if (dim()==1) {
+
+	}else if(dim()==2){
+		circleR_ = circleR_ * f;
+	}
 }
 
 bool Shape::contains(const Point& p) const {
 	// IMPLEMENT ME
-	return false; // dummy
+	if (dim()==0) { // point
+		if (p.getX() == pX_ && p.getY() == pY_) {
+			return true;
+		}else{
+			return false;
+		}
+	}else if (dim()==1) {
+	
+	}
+	return false;
 }
 
 // =============== Point class ================
@@ -80,6 +112,7 @@ Point::Point(float x, float y, int d) {
 	}
 	pX_ = x;
 	pY_ = y; 
+	depth_ = d;
 }
 
 float Point::getX() const {
@@ -106,10 +139,13 @@ LineSegment::LineSegment(const Point& p, const Point& q) {
 		lineYmax_ = p.getY() >= q.getY() ? p.getY() : q.getY();
 		lineYmin_ = p.getY() < q.getY() ? p.getY() : q.getY();
 	}
+	//cout << lineXmin_ << " " << lineXmax_ << " " << lineYmax_ << " " << lineYmin_;
+	depth_ = p.getDepth();
 }
 
 float LineSegment::getXmin() const {
 	// IMPLEMENT ME
+	cout << "123xx" << lineXmin_ << endl;
 	return lineXmin_;
 }
 
