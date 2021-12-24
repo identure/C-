@@ -83,7 +83,18 @@ void Shape::scale(float f) {
 		throw std::invalid_argument("the f is 0 or negative");
 	}
 	if (dim()==1) { // line
-		
+		float lengthT = 0;
+		if (lineXmin_ == lineXmax_) {
+			lengthT = lineYmax_ - lineYmin_;
+			float distance = (lengthT * f - lengthT) / 2;
+				lineYmin_ = f <= 1 ? lineYmin_ + distance : lineYmin_ - distance;
+				lineYmax_ = f <= 1 ? lineYmax_ - distance : lineYmin_ + distance;
+		}else {
+			lengthT = lineXmax_ - lineXmin_;
+			float distance = (lengthT * f - lengthT)/2;
+			lineXmin_ = f <= 1 ? lineXmin_ + distance : lineXmin_ - distance;
+			lineXmax_ = f <= 1 ? lineXmax_ - distance : lineXmax_ + distance;
+		}
 	}else if(dim()==2){
 		circleR_ = circleR_ * f;
 	}
