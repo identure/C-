@@ -2,6 +2,7 @@
 #define GEOMETRY_H_
 
 #include <iostream>
+#include <cmath>
 #include <memory>
 using namespace std;
 
