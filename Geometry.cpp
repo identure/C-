@@ -82,8 +82,8 @@ void Shape::scale(float f) {
 	if (f <= 0) {
 		throw std::invalid_argument("the f is 0 or negative");
 	}
-	if (dim()==1) {
-
+	if (dim()==1) { // line
+		
 	}else if(dim()==2){
 		circleR_ = circleR_ * f;
 	}
@@ -97,8 +97,26 @@ bool Shape::contains(const Point& p) const {
 		}else{
 			return false;
 		}
-	}else if (dim()==1) {
-	
+	}else if (dim()==1) { // line
+		if (p.getX()>=lineXmin_ && p.getX()<=lineXmax_ && p.getY()>=lineYmin_ && p.getY()<=lineYmax_) {
+			return true;
+		}else{
+			return false;
+		}
+	}else if(dim()==2){ // twoshape
+		if (p.getX() >= lineXmin_ && p.getX() <= lineXmax_ && p.getY() >= lineYmin_ && p.getY() <= lineYmax_) {
+			return true;
+		}else {
+			return false;
+		}
+		if (circleR_!=0) {
+			float lenTmp = sqrt(pow((p.getX() - circleX_), 2) + pow((p.getY() - circleY_), 2));
+			if (lenTmp <= circleR_) {
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 	return false;
 }
@@ -113,6 +131,7 @@ Point::Point(float x, float y, int d) {
 	pX_ = x;
 	pY_ = y; 
 	depth_ = d;
+	dim_ = 0;
 }
 
 float Point::getX() const {
@@ -141,6 +160,7 @@ LineSegment::LineSegment(const Point& p, const Point& q) {
 	}
 	//cout << lineXmin_ << " " << lineXmax_ << " " << lineYmax_ << " " << lineYmin_;
 	depth_ = p.getDepth();
+	dim_ = 1;
 }
 
 float LineSegment::getXmin() const {
@@ -213,6 +233,7 @@ Rectangle::Rectangle(const Point& p, const Point& q) {
 		recYmax_ = p.getY() >= q.getY() ? p.getY() : q.getY();
 		recYmin_ = p.getY() < q.getY() ? p.getY() : q.getY();
 	}
+	dim_ = 2;
 }
 
 float Rectangle::getXmin() const {
@@ -246,6 +267,7 @@ Circle::Circle(const Point& c, float r) {
 		circleY_ = c.getY();
 		circleR_ = r;
 	}
+	dim_ = 2;
 }
 
 float Circle::getX() const {
