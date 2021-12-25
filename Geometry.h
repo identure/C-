@@ -58,11 +58,14 @@ public:
 	float lineYmax_;  //the min y - coordinate of the line point2
 	float length_; //the length of the line
 
-
 	float recXmin_;  //the min x - coordinate of the Rectangle point1
 	float recXmax_;  //the max x - coordinate of the Rectangle point1
 	float recYmin_;  //the min y - coordinate of the Rectangle point2
 	float recYmax_;  //the min y - coordinate of the Rectangle point2
+
+	float circleX_; // the x-coordinate of the Circle
+	float circleY_; // the y-coordinate of the Circle
+	float circleR_; // the radius of the Circle
 
 protected:
 private:
@@ -155,9 +158,6 @@ public:
 
 private:
 	// add any member variables you need
-	float circleX_; // the x-coordinate of the Circle
-	float circleY_; // the y-coordinate of the Circle
-	float circleR_; // the radius of the Circle
 };
 
 
