@@ -6,6 +6,7 @@ Shape::Shape() {} // REMOVE ME
 
 Shape::Shape(int d) {
 	// IMPLEMENT ME
+	length_ = 0;
 	if (d<0) {
 		throw std::invalid_argument("The input d value is a negative number");
 	}
@@ -30,7 +31,6 @@ int Shape::dim() const {
 
 void Shape::translate(float x, float y) {
 	// IMPLEMENT ME
-	cout << dim() << "dim" << endl;
 	if (dim()==0) {
 		pX_ = pX_ + x;
 		pY_ = pY_ + y;
@@ -68,8 +68,8 @@ void Shape::rotate() {
 		float num2 = (recYmax_ - recYmin_) / 2;
 		float num3 = num1 + recXmin_ - num2;
 		float num4 = num1 + recXmin_ + num2;
-		float num5 = num2 + recYmin_ - num2;
-		float num6 = num1 + recYmin_ + num2;
+		float num5 = num2 + recYmin_ - num1;
+		float num6 = num2 + recYmin_ + num1;
 		recXmin_ = num3;
 		recXmax_ = num4;
 		recYmin_ = num5;
@@ -86,16 +86,27 @@ void Shape::scale(float f) {
 		float lengthT = 0;
 		if (lineXmin_ == lineXmax_) {
 			lengthT = lineYmax_ - lineYmin_;
-			float distance = (lengthT * f - lengthT)>=0?(lengthT * f - lengthT) / 2: (lengthT - lengthT * f) / 2;
-				lineYmin_ = f <= 1 ? lineYmin_ + distance : lineYmin_ - distance;
-				lineYmax_ = f <= 1 ? lineYmax_ - distance : lineYmin_ + distance;
+			float distance = (lengthT * f - lengthT) / 2;
+			lineYmin_ = lineYmin_ - distance;
+			lineYmax_ = lineYmax_ + distance;
 		}else {
 			lengthT = lineXmax_ - lineXmin_;
-			float distance = (lengthT * f - lengthT) >= 0 ? (lengthT * f - lengthT) / 2 : (lengthT - lengthT * f) / 2;
-			lineXmin_ = f <= 1 ? lineXmin_ + distance : lineXmin_ - distance;
-			lineXmax_ = f <= 1 ? lineXmax_ - distance : lineXmax_ + distance;
+			float distance = (lengthT * f - lengthT) / 2;
+			lineXmin_ = lineXmin_ - distance;
+			lineXmax_ = lineXmax_ + distance;
 		}
 	}else if(dim()==2){
+		float lengthX = 0;
+		float lengthY = 0;
+		lengthX = recXmax_ - recXmin_;
+		lengthY = recYmax_ - recYmin_;
+		float distanceX = (lengthX * f - lengthX) / 2;
+		float distanceY = (lengthY * f - lengthY) / 2;
+		recXmin_ = recXmin_ - distanceX;
+		recXmax_ = recXmax_ + distanceX;
+		recYmin_ = recYmin_ - distanceY;
+		recYmax_ = recYmax_ + distanceY;
+		//circle
 		circleR_ = circleR_ * f;
 	}
 }
@@ -109,17 +120,12 @@ bool Shape::contains(const Point& p) const {
 			return false;
 		}
 	}else if (dim()==1) { // line
-		if (p.getX()>=lineXmin_ && p.getX()<=lineXmax_ && p.getY()>=lineYmin_ && p.getY()<=lineYmax_) {
+		if ((p.getX()>=lineXmin_) && (p.getX()<=lineXmax_) && (p.getY()>=lineYmin_) && (p.getY()<=lineYmax_)) {
 			return true;
 		}else{
 			return false;
 		}
 	}else if(dim()==2){ // twoshape
-		if (p.getX() >= lineXmin_ && p.getX() <= lineXmax_ && p.getY() >= lineYmin_ && p.getY() <= lineYmax_) {
-			return true;
-		}else {
-			return false;
-		}
 		if (circleR_!=0) {
 			float lenTmp = sqrt(pow((p.getX() - circleX_), 2) + pow((p.getY() - circleY_), 2));
 			if (lenTmp <= circleR_) {
@@ -127,6 +133,12 @@ bool Shape::contains(const Point& p) const {
 			}else{
 				return false;
 			}
+		}
+		if ((p.getX() >= recXmin_) && (p.getX() <= recXmax_) && (p.getY() >= recYmin_) && (p.getY() <= recYmax_)) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	return false;
@@ -142,7 +154,6 @@ Point::Point(float x, float y, int d) {
 	pX_ = x;
 	pY_ = y; 
 	depth_ = d;
-	dim_ = 0;
 }
 
 float Point::getX() const {
@@ -159,24 +170,25 @@ float Point::getY() const {
 
 LineSegment::LineSegment(const Point& p, const Point& q) {
 	// IMPLEMENT ME
+	depth_ = p.getDepth();
+	dim_ = 1;
+	length_ = 0;
 	if (p.getDepth()!=q.getDepth()) {
 		throw std::invalid_argument("The two endpoints should have the same depth");
 	}else if (p.getX() == q.getX() && p.getY() == q.getY()) {
-		throw std::invalid_argument("the two endpoints coincide");
+		throw std::invalid_argument("line not orthogonal should throw exception");
+	}else if (p.getX() != q.getX() && p.getY() != q.getY()){
+	
 	}else if (p.getX()==q.getX() || p.getY()==q.getY()) {
-		lineXmax_ = p.getX() >= q.getX() ? p.getX() : q.getX();
-		lineXmin_ = p.getX() < q.getX() ? p.getX() : q.getX();
+		lineXmax_ = (p.getX() >= q.getX()) ? p.getX() : q.getX();
+		lineXmin_ = (p.getX() < q.getX()) ? p.getX() : q.getX();
 		lineYmax_ = p.getY() >= q.getY() ? p.getY() : q.getY();
 		lineYmin_ = p.getY() < q.getY() ? p.getY() : q.getY();
 	}
-	//cout << lineXmin_ << " " << lineXmax_ << " " << lineYmax_ << " " << lineYmin_;
-	depth_ = p.getDepth();
-	dim_ = 1;
 }
 
 float LineSegment::getXmin() const {
 	// IMPLEMENT ME
-	cout << "123xx" << lineXmin_ << endl;
 	return lineXmin_;
 }
 
@@ -198,7 +210,6 @@ float LineSegment::getYmax() const {
 float LineSegment::length() const {
 	// IMPLEMENT ME
 	float lengthTmp = 0; // the length of the line
-	//cout << lineXmin_ << " " << lineXmax_ << " " << lineYmax_ << " " << lineYmin_;
 	if (lineXmin_ == lineXmax_) {
 		lengthTmp = lineYmax_ - lineYmin_;
 	}else {
@@ -222,29 +233,34 @@ TwoDShape::TwoDShape(int d) {
 float TwoDShape::area() const {
 	// IMPLEMENT ME
 	float s = 0;
-	if (dim()==0 || dim()==1) { // Shape is point
+	if (dim()==0 || dim()==1) { // Shape is point or line
 		s = 0;
-	}else if (dim()==2) { // Shape is circle
-		//s = PI * r;
+	}else if (dim()==2) { // Shape is Rectangle or circle
+		if (circleR_!=0) {
+			s = PI * circleR_ * circleR_;
+		}else{
+			s = (recXmax_ - recXmin_) * (recYmax_ - recYmin_);
+		}
 	}
-	return -999; // dummy
+	return s; // dummy
 }
 
 // ============== Rectangle class ================
 
 Rectangle::Rectangle(const Point& p, const Point& q) {
 	// IMPLEMENT ME
+	depth_ = p.getDepth();
+	dim_ = 2;
 	if (p.getDepth() != q.getDepth()) {
 		throw std::invalid_argument("The two endpoints should have the same depth");
 	}else if (p.getX() == q.getX() || p.getY() == q.getY()) {
 		throw std::invalid_argument("the two endpoints coincide");
-	}else if (p.getX() == q.getX() || p.getY() == q.getY()) {
-		recXmax_ = p.getX() >= q.getX() ? p.getX() : q.getX();
-		recXmin_ = q.getX() < q.getX() ? p.getX() : q.getX();
-		recYmax_ = p.getY() >= q.getY() ? p.getY() : q.getY();
-		recYmin_ = p.getY() < q.getY() ? p.getY() : q.getY();
+	}else if (p.getX() != q.getX() && p.getY() != q.getY()) {
+		recXmax_ = (p.getX() >= q.getX()) ? p.getX() : q.getX();
+		recXmin_ = (p.getX() < q.getX()) ? p.getX() : q.getX();
+		recYmax_ = (p.getY() >= q.getY()) ? p.getY() : q.getY();
+		recYmin_ = (p.getY() < q.getY()) ? p.getY() : q.getY();
 	}
-	dim_ = 2;
 }
 
 float Rectangle::getXmin() const {
@@ -271,6 +287,7 @@ float Rectangle::getYmax() const {
 
 Circle::Circle(const Point& c, float r) {
 	// IMPLEMENT ME
+	depth_ = c.getDepth();
 	if (r <= 0) {
 		throw std::invalid_argument("the radius is 0 or negative");
 	}else {
