@@ -1,22 +1,26 @@
-#include "LinkedList.h"
+#include "Order.h"
+#include <iostream>
+#include<string>
+#include<vector>
 
-int main() {
-	LinkedList mylist;
-	mylist.print();
-	mylist.insert_head(1);
-	mylist.insert_head(2);
-	mylist.insert_head(3);
-	mylist.print();
-	LNode* result = mylist.find(3);
-	if (result != nullptr) mylist.insert_after(result, 4);
-	mylist.print();
-	mylist.remove(mylist.find(3));
-	mylist.print();
-	mylist.remove(mylist.find(2));
-	mylist.print();
-	mylist.remove(mylist.find(4));
-	mylist.print();
-	mylist.remove(mylist.find(1));
-	mylist.print();
+using namespace std;
 
+int main(){
+
+    cout << std::fixed << std::setprecision(2);
+    Order a;
+
+    // Read/write file storage location
+    string fileName = "C:\\a2b\\orders.txt";
+    string exefileName = "C:\\a2b\\executions.txt";
+
+    vector<string> reread;
+    a.read_txt(reread, fileName);
+
+    a.printOrder(); // Screen print all orders
+    a.matchOrder(); // Screen prints all order matching information,assume that all orders are indivisible
+
+    vector<string> information;
+    a.write_txt(information, exefileName);
+    return 0;
 }
