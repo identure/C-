@@ -15,10 +15,16 @@
 # See the one in Assignment 1 for really using separate compilation.
 
 All: all
-all: main LinkedListTesterMain
+all: main
 
-main: LinkedList.h LinkedList.cpp main.cpp
-	g++ LinkedList.cpp main.cpp -o main
+main: main.cpp Order.o
+	g++ main.cpp Order.o -o main
+	
+Order.o: Order.cpp Order.h
+	g++ -c Order.cpp -o Order.o
 
-LinkedListTesterMain: LinkedList.h LinkedList.cpp LinkedListTester.h LinkedListTester.cpp LinkedListTesterMain.cpp
-	g++ LinkedList.cpp LinkedListTester.cpp LinkedListTesterMain.cpp -o LinkedListTesterMain
+deepclean:
+	  rm -f *~*.o main main.exe *.stackdump
+	 
+clean:
+	  rm -f *~*.o *.stackdump
