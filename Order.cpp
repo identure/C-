@@ -3,6 +3,8 @@
 Order::Order() {
 	// IMPLEMENT ME
     marketPrice_ = 0.0;
+    buyONum = 0;
+    sellONum = 0;
 }
 
 Order::~Order() {
@@ -15,6 +17,8 @@ void Order::read_txt(vector<string>& info, string in_file)
 {
     char buf[1024];
     ifstream file(in_file.c_str());
+    //ifstream infile;
+    //infile.open(in_file.c_str());
     if (!file.is_open()){
         cout << "open file :" << in_file << "has failed!!" << endl;
         return;
@@ -187,7 +191,7 @@ void Order::matchOrder() {
         is >> str[0] >> str[1] >> str[2] >> str[3] >> str[4] >> str[5];
         if (strcmp(str[1].c_str(), "B") == 0) {
             buyname = str[0];
-            buynum = stol(str[5]);
+            buynum = atoi(str[5].c_str());
             if (leftsellorders.size() == 0) { // No sale order, no execution 
                 output = output + str[0] + " shares unexecuted";
             }else{
@@ -195,7 +199,7 @@ void Order::matchOrder() {
                     string str[6];
                     istringstream is(leftsellorders[y]);
                     is >> str[0] >> str[1] >> str[2] >> str[3] >> str[4] >> str[5];
-                    if (stol(str[5])!=buynum) {
+                    if (atoi(str[5].c_str())!=buynum) {
                         output = output + buyname + " shares unexecuted";
                         break;
                     }else {
@@ -206,11 +210,11 @@ void Order::matchOrder() {
                 }
             }
         }else{
-            if (stod(str[4]) > price) { // update the highest price
-                price = stod(str[4]);
-            }
+            //if (stod(str[4]) > price) { // update the highest price
+                //price = stod(str[4]);
+            //}
             sellname = str[0];
-            sellnum = stol(str[5]);
+            sellnum = atoi(str[5].c_str());
             if (leftbuyorders.size() == 0) { // No payment, no execution
                 output = output + str[0] + " shares unexecuted";
             }
@@ -219,7 +223,7 @@ void Order::matchOrder() {
                     string str[6];
                     istringstream is(leftbuyorders[y]);
                     is >> str[0] >> str[1] >> str[2] >> str[3] >> str[4] >> str[5];
-                    if (stol(str[5]) != sellnum) {
+                    if (atoi(str[5].c_str()) != sellnum) {
                         output = output + sellname + " shares unexecuted";
                         break;
                     }else {
@@ -231,5 +235,6 @@ void Order::matchOrder() {
             }
         }
     }
-   cout << output;
+   cout << output << endl;
+   return;
 }
