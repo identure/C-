@@ -5,15 +5,14 @@
 
 using namespace std;
 
-int main(){
+int main(int def, char **arg){
 
     cout << std::fixed << std::setprecision(2);
     Order a;
-
+	
     // Read/write file storage location
-    string fileName = "C:\\a2b\\orders.txt";
-    string exefileName = "C:\\a2b\\executions.txt";
-
+    string fileName;
+    fileName = arg[1];
     vector<string> reread;
     a.read_txt(reread, fileName);
 
@@ -21,6 +20,7 @@ int main(){
     a.matchOrder(); // Screen prints all order matching information,assume that all orders are indivisible
 
     vector<string> information;
+    string exefileName = "executions.txt";
     a.write_txt(information, exefileName);
     return 0;
 }
