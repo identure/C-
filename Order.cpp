@@ -1,14 +1,14 @@
 #include "Order.h"
 
 Order::Order() {
-	// IMPLEMENT ME
+    // IMPLEMENT ME
     marketPrice_ = 0.0;
     buyONum = 0;
     sellONum = 0;
 }
 
 Order::~Order() {
-	// IMPLEMENT ME
+    // IMPLEMENT ME
 
 }
 
@@ -19,7 +19,7 @@ void Order::read_txt(vector<string>& info, string in_file)
     ifstream file(in_file.c_str());
     //ifstream infile;
     //infile.open(in_file.c_str());
-    if (!file.is_open()){
+    if (!file.is_open()) {
         cout << "open file :" << in_file << "has failed!!" << endl;
         return;
     }
@@ -27,24 +27,26 @@ void Order::read_txt(vector<string>& info, string in_file)
     // Read the file and split the order
     string resl;
     int resnum = 0;
-    for (int i = 0; file.good() && !file.eof(); i++){
+    for (int i = 0; file.good() && !file.eof(); i++) {
         memset(buf, 0, 1024);
-        file.getline(buf, 1024); 
+        file.getline(buf, 1024);
         string message(buf);
-        if (i==0) { 
+        if (i == 0) {
             marketPrice_ = atof(message.c_str());
-        }else{ // Get the contents of a single order
-            //cout << message;
+        }
+        else { // Get the contents of a single order
+           //cout << message;
             allorders.push_back(message);
             string str[6];
             istringstream is(message);
             is >> str[0] >> str[1] >> str[2] >> str[3] >> str[4] >> str[5];
-            if (strcmp(str[1].c_str(),"B")==0) {
+            if (strcmp(str[1].c_str(), "B") == 0) {
                 buyONum++;
                 buyorders.push_back(message);
                 leftbuyorders.push_back(message);
                 sellorders.push_back("empty");
-            }else{
+            }
+            else {
                 sellONum++;
                 buyorders.push_back("empty");
                 sellorders.push_back(message);
@@ -78,7 +80,7 @@ void Order::write_txt(vector<string> info, string out_file, int Mode)
         break;
     }
 
-    if (!outfile.is_open()){
+    if (!outfile.is_open()) {
         cout << "open file :" << out_file << "has failed!!!!" << endl;
         return;
     }
@@ -92,8 +94,8 @@ void Order::write_txt(vector<string> info, string out_file, int Mode)
 
 
 string Order::getWay() const {
-	// IMPLEMENT ME
-	return way;
+    // IMPLEMENT ME
+    return way;
 }
 
 string Order::getType() const {
@@ -114,12 +116,12 @@ void Order::printOrder() {
     int m = 0;
     int n = 0;
     int totalnum = 0;
-    totalnum = buyONum >= sellONum? buyONum*2 : sellONum*2;
+    totalnum = buyONum >= sellONum ? buyONum * 2 : sellONum * 2;
     for (int i = 0; i < totalnum; i++) {
-        if (i%2==0) {
+        if (i % 2 == 0) {
             //cout << i << buyorders[i] << endl;
             for (int y = m; y < buyorders.size(); y++) {
-                if (m == buyorders.size()-1) {
+                if (m == buyorders.size() - 1) {
                     resr = "                \t";
                     cout << resr;
                     break;
@@ -132,16 +134,19 @@ void Order::printOrder() {
                     cout << resr;
                     m++;
                     break;
-                }else if (strcmp(buyorders[m].c_str(), "empty") == 0 && (m == buyorders.size()-1)) {
+                }
+                else if (strcmp(buyorders[m].c_str(), "empty") == 0 && (m == buyorders.size() - 1)) {
                     resr = "                \t";
                     cout << resr;
                     m++;
                     break;
-                }else {
+                }
+                else {
                     m++;
                 }
             }
-        }else{
+        }
+        else {
             //cout << i << sellorders[i] << endl;
             for (int y = n; y < sellorders.size(); y++) {
                 if (n == sellorders.size()) {
@@ -157,18 +162,20 @@ void Order::printOrder() {
                     cout << resr;
                     n++;
                     break;
-                }else if (strcmp(sellorders[n].c_str(), "empty") == 0 && (n == sellorders.size() - 1)) {
+                }
+                else if (strcmp(sellorders[n].c_str(), "empty") == 0 && (n == sellorders.size() - 1)) {
                     resr = "\n";
                     cout << resr;
                     n++;
                     break;
-                }else {
+                }
+                else {
                     n++;
                 }
             }
         }
-        
-       
+
+
     }
 
     //for (auto i : buyorders)
@@ -180,6 +187,7 @@ void Order::printOrder() {
 void Order::matchOrder() {
     output = "";
     double price = 0.00;
+    string lastprice;
     int buynum = 0;
     int sellnum = 0;
     string buyname;
@@ -192,31 +200,37 @@ void Order::matchOrder() {
         if (strcmp(str[1].c_str(), "B") == 0) {
             buyname = str[0];
             buynum = atoi(str[5].c_str());
+            price = atof(str[4].c_str());
+            lastprice = str[4];
             if (leftsellorders.size() == 0) { // No sale order, no execution 
-                output = output + str[0] + " shares unexecuted";
-            }else{
+                output = output + "order " + str[0] + " shares unexecuted";
+            }
+            else {
                 for (int y = 0; y < leftsellorders.size(); y++) { // If the order quantity and bill are not correct, it will not be executed     
                     string str[6];
                     istringstream is(leftsellorders[y]);
                     is >> str[0] >> str[1] >> str[2] >> str[3] >> str[4] >> str[5];
-                    if (atoi(str[5].c_str())!=buynum) {
-                        output = output + buyname + " shares unexecuted";
+                    if (atoi(str[5].c_str()) != buynum) {
+                        output = output + "order " + buyname + " shares unexecuted";
                         break;
-                    }else {
-                        output = output + buyname + " " + str[5] + " shares purchased at price " + str[4] +"\n";
+                    }
+                    else {
+                        output = output + "order " + buyname + " " + str[5] + " shares purchased at price " + lastprice + "\n";
                         leftsellorders.erase(leftsellorders.begin() + y);
                         break;
                     }
                 }
             }
-        }else{
+        }
+        else {
             //if (stod(str[4]) > price) { // update the highest price
                 //price = stod(str[4]);
             //}
             sellname = str[0];
             sellnum = atoi(str[5].c_str());
+            lastprice = str[4];
             if (leftbuyorders.size() == 0) { // No payment, no execution
-                output = output + str[0] + " shares unexecuted";
+                output = output + "order " + str[0] + " shares unexecuted";
             }
             else {
                 for (int y = 0; y < leftbuyorders.size(); y++) { // If the order quantity and bill are not correct, it will not be executed
@@ -224,10 +238,11 @@ void Order::matchOrder() {
                     istringstream is(leftbuyorders[y]);
                     is >> str[0] >> str[1] >> str[2] >> str[3] >> str[4] >> str[5];
                     if (atoi(str[5].c_str()) != sellnum) {
-                        output = output + sellname + " shares unexecuted";
+                        output = output + "order " + sellname + " shares unexecuted";
                         break;
-                    }else {
-                        output = output + sellname + " " + str[5] + " shares sold at price " + str[4] + "\n";
+                    }
+                    else {
+                        output = output + "order " + sellname + " " + str[5] + " shares sold at price " + lastprice + "\n";
                         leftbuyorders.erase(leftbuyorders.begin() + y);
                         break;
                     }
@@ -235,6 +250,6 @@ void Order::matchOrder() {
             }
         }
     }
-   cout << output << endl;
-   return;
+    cout << output << endl;
+    return;
 }
